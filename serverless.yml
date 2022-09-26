@@ -1,4 +1,4 @@
-service: helloseven-latest
+service: lambda-airtable-api
 
 plugins:
   - serverless-webpack
