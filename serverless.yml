@@ -1,0 +1,78 @@
+service: helloseven-latest
+
+plugins:
+  - serverless-webpack
+
+package:
+  individually: true
+
+custom:
+  webpack:
+    packager: npm
+
+useDotenv: true
+
+provider:
+  name: aws
+  region: us-east-1
+  runtime: nodejs14.x
+  environment: ${file(env.${opt:stage, 'staging'}.json)}
+
+functions:
+
+  createTask:
+    handler: airtable/createTask.handler    
+    maximumRetryAttempts: 2
+    maximumEventAge: 7200
+    memorySize: 512
+    timeout: 300
+    events:
+      - http:
+          path: airtable/create-tasks
+          method: post
+          integration: aws
+          request:
+            passThrough: NEVER
+            template: 
+              application/json: ${file(methodRequestTemplate.yml)} 
+              application/x-www-form-urlencoded: ${file(methodRequestTemplate.yml)} 
+            parameters:
+              headers:
+                'X-Amz-Invocation-Type': true
+          response:
+            statusCodes:
+              200:
+                pattern: ''
+                template:
+                  application/json: ${file(methodResponse.yml)} 
+                  application/x-www-form-urlencoded: ${file(methodResponse.yml)} 
+
+  updateAccessGranted:
+    handler: airtable/updateAccessGranted.handler    
+    maximumRetryAttempts: 2
+    maximumEventAge: 7200
+    memorySize: 512
+    timeout: 300
+    events:
+      - http:
+          path: airtable/update-access-granted
+          method: put
+          integration: aws
+          request:
+            passThrough: NEVER
+            template: 
+              application/json: ${file(methodRequestTemplate.yml)} 
+              application/x-www-form-urlencoded: ${file(methodRequestTemplate.yml)} 
+            parameters:
+              headers:
+                'X-Amz-Invocation-Type': true
+          response:
+            statusCodes:
+              200:
+                pattern: ''
+                template:
+                  application/json: ${file(methodResponse.yml)} 
+                  application/x-www-form-urlencoded: ${file(methodResponse.yml)}                   
+
+
+

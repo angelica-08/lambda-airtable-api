@@ -1,0 +1,11 @@
+"#if($util.escapeJavaScript($input.params('X-Amz-Invocation-Type')) == 'Event')\n
+  #set($context.responseOverride.status = 202)\n
+  \"message\": \"processing\"\n
+ #elseif($input.json('$.statusCode') != 200 )\n
+ #set($Integer = 0)\n
+ #set($statusCode = $Integer.parseInt($input.json('$.statusCode')))\n
+ #set($context.responseOverride.status = $statusCode)\n
+ \"message\": $input.json('$.body')\n
+ #else\n
+ $util.parseJson($input.json('$.body'))\n
+ #end"

@@ -1,0 +1,10 @@
+"{\"body\": $input.json('$'),\n
+ \"queryParams\":\n 
+ { \n
+#foreach($param in $input.params().querystring.keySet())\n
+\"$param\": \"$util.escapeJavaScript($input.params().querystring.get($param))\" \n
+#if($foreach.hasNext),#end #end\n
+},\n 
+\"headers\":\n 
+{\"Authorization\" : \"$util.escapeJavaScript($input.params('Authorization'))\",\n
+ \"InvocationType\": \"$util.escapeJavaScript($input.params('X-Amz-Invocation-Type'))\"}}"
